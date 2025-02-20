@@ -57,21 +57,6 @@ contract NFTMarket is ITokenReceiver {
         delete listings[nftContract][tokenId];
     }
     
-    // 通过回调购买NFT
-    function buyNFTWithCallback(address nftContract, uint256 tokenId) external {
-        Listing memory listing = listings[nftContract][tokenId];
-        require(listing.isActive, "NFT not listed");
-        
-        // 存储当前交易信息供回调使用
-        currentBuyer = msg.sender;
-        currentNFTContract = nftContract;
-        currentTokenId = tokenId;
-        
-        // 使用支持回调的转账方法
-        require(paymentToken.transferWithCallback(address(this), listing.price), 
-                "Token transfer failed");
-    }
-    
     // 实现 ITokenReceiver 接口的回调函数
     function tokensReceived(address from, uint256 amount) external returns (bool) {
         require(msg.sender == address(paymentToken), "Invalid token");

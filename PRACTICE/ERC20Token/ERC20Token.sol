@@ -65,7 +65,7 @@ interface ITokenReceiver {
 
 // 将 BaseERC20 重命名为 ERC20WithCallback 并添加新函数
 contract ERC20WithCallback is BaseERC20 {
-    function transferWithCallback(address _to, uint256 _value) public returns (bool success) {
+    function transferWithCallback(address _to, uint256 _value,bytes calldata data) public returns (bool success) {
         require(balances[msg.sender] >= _value, "ERC20: transfer amount exceeds balance");
         
         balances[msg.sender] -= _value;
@@ -73,7 +73,7 @@ contract ERC20WithCallback is BaseERC20 {
         
         // 如果接收方是合约，调用其 tokensReceived 函数
         if (_to.code.length > 0) {
-            bool callbackSuccess = ITokenReceiver(_to).tokensReceived(msg.sender, _value);
+            bool callbackSuccess = ITokenReceiver(_to).tokensReceived(msg.sender, _value,data);
             require(callbackSuccess, "Callback failed");
         }
         
